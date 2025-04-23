@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from .models import Category, Product
 
-
-
 class CategorySerializer(serializers.ModelSerializer):
     product_count = serializers.IntegerField(read_only=True)
     
@@ -24,5 +22,5 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = '__all__'
         extra_kwargs = {
-            'created_at': {'write_only': True, 'read_only': False}
+            'created_at': {'read_only': True},
         }
