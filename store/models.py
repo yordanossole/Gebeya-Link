@@ -1,19 +1,27 @@
 from django.db import models
 
 class Category(models.Model):
-    title = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
 
     def __str__(self) -> str:
-        return self.title
+        return self.name
 
+class Image(models.Model):
+    file_name = ""
+    file_type = ""
+    image = ""
+    download_url = ""
+    product = ""
+    user = ""
 class Product(models.Model):
-    title = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
     description = models.TextField()
     price_per_killo = models.DecimalField(max_digits=6, decimal_places=2)
     inventory_killo = models.BigIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT) # foreign_key to category_id
+    images = models.ForeignKey(Image, on_delete=models.SET_NULL, null=True)
 
 class Address(models.Model):
     REGION_CHOICES = [
