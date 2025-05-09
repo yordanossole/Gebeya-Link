@@ -6,40 +6,78 @@ class Category(models.Model):
     def __str__(self) -> str:
         return self.name
 
-class Image(models.Model):
-    file_name = ""
-    file_type = ""
-    image = ""
-    download_url = ""
-    product = ""
-    user = ""
 class Product(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     price_per_killo = models.DecimalField(max_digits=6, decimal_places=2)
     inventory_killo = models.BigIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
-    category = models.ForeignKey(Category, on_delete=models.PROTECT) # foreign_key to category_id
-    images = models.ForeignKey(Image, on_delete=models.SET_NULL, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='category') # foreign_key to category_id
 
 class Address(models.Model):
     REGION_CHOICES = [
         ('Addis Ababa', 'Addis Ababa'),
+        ('Addis Ababa', 'Addis Ababa'),
+        ('Addis Ababa', 'Addis Ababa'),
+        ('Addis Ababa', 'Addis Ababa'),
+        ('Addis Ababa', 'Addis Ababa'),
+        ('Addis Ababa', 'Addis Ababa'),
+        ('Addis Ababa', 'Addis Ababa'),
+        ('Addis Ababa', 'Addis Ababa'),
+        ('Addis Ababa', 'Addis Ababa'),
+        ('Addis Ababa', 'Addis Ababa'),
+        ('Addis Ababa', 'Addis Ababa'),
     ]
     CITY_CHOICES = [
+        ('Addis Ababa', 'Addis Ababa'),
+        ('Addis Ababa', 'Addis Ababa'),
+        ('Addis Ababa', 'Addis Ababa'),
+        ('Addis Ababa', 'Addis Ababa'),
+        ('Addis Ababa', 'Addis Ababa'),
+        ('Addis Ababa', 'Addis Ababa'),
+        ('Addis Ababa', 'Addis Ababa'),
+        ('Addis Ababa', 'Addis Ababa'),
         ('Addis Ababa', 'Addis Ababa'),
     ]
     ZONE_CHOICES = [
         ('Arada', 'Arada'),
+        ('Arada', 'Arada'),
+        ('Arada', 'Arada'),
+        ('Arada', 'Arada'),
+        ('Arada', 'Arada'),
+        ('Arada', 'Arada'),
+        ('Arada', 'Arada'),
+        ('Arada', 'Arada'),
+        ('Arada', 'Arada'),
     ]
     WOREDA_CHOICES = [
+        ('01', '01'),
+        ('01', '01'),
+        ('01', '01'),
+        ('01', '01'),
+        ('01', '01'),
+        ('01', '01'),
+        ('01', '01'),
         ('01', '01'),
     ]
     KEBELE_CHOICES = [
         ('01', '01'),
+        ('01', '01'),
+        ('01', '01'),
+        ('01', '01'),
+        ('01', '01'),
+        ('01', '01'),
+        ('01', '01'),
+        ('01', '01'),
     ]
     STREET_CHOICES = [
+        ('Street Name', 'Street Name'),
+        ('Street Name', 'Street Name'),
+        ('Street Name', 'Street Name'),
+        ('Street Name', 'Street Name'),
+        ('Street Name', 'Street Name'),
+        ('Street Name', 'Street Name'),
         ('Street Name', 'Street Name'),
     ]
 
@@ -57,13 +95,21 @@ class Customer(models.Model):
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=255)
     birth_date = models.DateField(null=True)
-    address = models.ForeignKey(Address, on_delete=models.PROTECT)
+    address = models.OneToOneField(Address, on_delete=models.PROTECT, related_name='address')
+
+class Image(models.Model):
+    file_name = models.CharField(max_length=255)
+    file_type = models.CharField(max_length=50)
+    image = models.ImageField(upload_to="product_images/")
+    download_url = models.URLField()
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
+    user = models.OneToOneField(Customer, on_delete=models.CASCADE, related_name="image")
 
 class Comment(models.Model):
     content = models.TextField()
     rating = models.SmallIntegerField()
-    product = models.ForeignKey(Product, on_delete=models.CASCADE) # foreign_key to product_it
-    customer = models.ForeignKey(Customer, on_delete=models.SET_DEFAULT, default=0) # foreign_key to customer_id
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='customer') # foreign_key to product_it
+    customer = models.ForeignKey(Customer, on_delete=models.SET_DEFAULT, default=0, related_name='customer') # foreign_key to customer_id
 
 
 class Order(models.Model):
@@ -79,7 +125,7 @@ class Order(models.Model):
     ]
     placed_at = models.DateTimeField(auto_now_add=True)
     payment_status = models.CharField(max_length=1, choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_PENDING)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE) # foreign_key to customer_id
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='customer') # foreign_key to customer_id
 
 class OrderItem(models.Model):
     quantity = models.DecimalField(max_digits=6, decimal_places=2)
