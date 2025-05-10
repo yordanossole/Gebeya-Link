@@ -13,7 +13,7 @@ class Product(models.Model):
     inventory_killo = models.BigIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='category') # foreign_key to category_id
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='products')
 
 class Address(models.Model):
     REGION_CHOICES = [
@@ -95,7 +95,7 @@ class Customer(models.Model):
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=255)
     birth_date = models.DateField(null=True)
-    address = models.OneToOneField(Address, on_delete=models.PROTECT, related_name='address')
+    address = models.OneToOneField(Address, on_delete=models.PROTECT, related_name='customer')
 
 class Image(models.Model):
     file_name = models.CharField(max_length=255)
@@ -108,9 +108,8 @@ class Image(models.Model):
 class Comment(models.Model):
     content = models.TextField()
     rating = models.SmallIntegerField()
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='customer') # foreign_key to product_it
-    customer = models.ForeignKey(Customer, on_delete=models.SET_DEFAULT, default=0, related_name='customer') # foreign_key to customer_id
-
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='comments') 
+    customer = models.ForeignKey(Customer, on_delete=models.SET_DEFAULT, default=0, related_name='comments') 
 
 class Order(models.Model):
     PAYMENT_STATUS_PENDING = 'P'
@@ -125,20 +124,20 @@ class Order(models.Model):
     ]
     placed_at = models.DateTimeField(auto_now_add=True)
     payment_status = models.CharField(max_length=1, choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_PENDING)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='customer') # foreign_key to customer_id
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='orders') 
 
 class OrderItem(models.Model):
     quantity = models.DecimalField(max_digits=6, decimal_places=2)
     price_per_killo = models.DecimalField(max_digits=6, decimal_places=2)
-    order = models.ForeignKey(Order, on_delete=models.PROTECT) # foreign_key to order_id
-    product = models.ForeignKey(Product, on_delete=models.PROTECT) # foreign_key to product_it
+    order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name='order_items') 
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='order_items') 
 
 class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    customer = models.OneToOneField(Customer, on_delete=models.CASCADE) # foreign_key to customer_id
+    customer = models.OneToOneField(Customer, on_delete=models.CASCADE, related_name='cart') 
 
 class CartItem(models.Model):
     quantity = models.DecimalField(max_digits=6, decimal_places=2)
     price_per_killo = models.DecimalField(max_digits=6, decimal_places=2)
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE) # foreign_key to cart_id
-    product = models.ForeignKey(Product, on_delete=models.CASCADE) # foreign_key to product_id
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='cart_items') 
