@@ -4,9 +4,11 @@ from .models import Category, Product
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    product_count = serializers.IntegerField(read_only=True)
+    
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ['id', 'name', 'product_count']
 
 class ProductSerializer(serializers.ModelSerializer):
     category = serializers.HyperlinkedRelatedField(
